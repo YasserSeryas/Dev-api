@@ -36,5 +36,23 @@ const token = user.generateJWT()
 
 
 export async function login (ctx) {
+  try {
+    const loginValidationSchema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(6)
+    })
+    const params = ctx.request.body
+    const { error, value } = loginValidationSchema.validate(params)
+    if(error) throw new Error(error)  
+    const user = await UserModel.findOne({ email: value.email })
+    const password = await UserModel.findOne({ email: value.email }).select('password')
+    console.log(password)
+    if(!user) throw new Error('User not found') 
+    const isPasswordValid = await argon2.verify(password.password, value.password)
+    if(!isPasswordValid) throw new Error('Invalid password')
+    ctx.ok({message: 'Login successful'})
+  } catch(e) {
+    ctx.badRequest({ message: e.message })
+  }
   
 }
