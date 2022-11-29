@@ -56,3 +56,22 @@ export async function login (ctx) {
   }
   
 }
+export async function update (ctx) {
+  try {
+    const updateValidationSchema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(6)
+    })
+  
+    const params = ctx.request.body
+    const { error, value } = updateValidationSchema.validate(params) 
+    value.password = await argon2.hash(value.password)
+    console.log(value)
+    
+    if(error) throw new Error(error)
+    const updatedUser = await UserModel.findByIdAndUpdate(ctx.params.id, value, { runValidators: true, new: true })
+    ctx.ok(updatedUser)
+  } catch(e) {
+    ctx.badRequest({ message: e.message })
+  }
+}
