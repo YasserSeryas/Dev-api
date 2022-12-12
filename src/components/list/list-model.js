@@ -20,6 +20,9 @@ listSchema.static({
     findByUserId(userId) {
         return this.find({ user: userId });
     },
+    verifyUserId(userId, listId) {
+        return this.findOne({ user: userId, _id: listId });
+    },
 });
 
 const List = mongoose.model("List", listSchema);

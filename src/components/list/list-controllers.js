@@ -16,8 +16,10 @@ export async function index(ctx) {
 export async function id(ctx) {
     try {
         if (!ctx.params.id) throw new Error("No id supplied");
-        const list = await ListModel.findById(ctx.params.id).lean();
-        list.tasks = await TaskModel.findByListId(ctx.params.id);
+        const list = await ListModel.verifyUserId(
+            ctx.state.user.id,
+            ctx.params.id
+        );
         if (!list) {
             return ctx.notFound();
         }
@@ -77,8 +79,7 @@ export async function update(ctx) {
             ctx.request.body
         );
         if (error) throw new Error(error);
-        const updatedList = await ListModel.findByIdAndUpdate(
-            ctx.params.id,
+        const updatedList = await ListModel.findOneAndUpdate({ _id: ctx.params.id, user: ctx.state.user.id },
             value, { runValidators: true, new: true }
         );
         ctx.ok(updatedList);
@@ -91,7 +92,7 @@ export async function destroy(ctx) {
     try {
         if (!ctx.params.id) throw new Error("No id supplied");
         // await TaskModel.deleteMany({ list:})
-        await ListModel.findByIdAndDelete(ctx.params.id);
+        await ListModel.findOneByIdAndDelete(ctx.state.user.id, ctx.params.id);
         ctx.ok("Ressource deleted");
     } catch (e) {
         ctx.badRequest({ message: e.message });
