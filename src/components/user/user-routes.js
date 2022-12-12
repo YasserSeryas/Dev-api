@@ -9,4 +9,4 @@ users.put('/:id', UserControllers.update)
 users.get('/me', isAuthentificatedAndResolveUser,(ctx) => {ctx.ok({message: 'My Profile',user:ctx.state.user.email})})
 
 
-export default users
+export default users;
