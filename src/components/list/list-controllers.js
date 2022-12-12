@@ -1,5 +1,6 @@
 import ListModel from "#components/list/list-model.js";
 import TaskModel from "#components/task/task-model.js";
+import UserModel from "#components/user/user-model.js";
 
 import Joi from "Joi";
 
@@ -29,8 +30,18 @@ export async function id(ctx) {
 export async function getAllByUser(ctx) {
     try {
         if (!ctx.params.userId) throw new Error("No id supplied");
-        const users = await TaskModel.findByUserId(ctx.params.userId);
+        const users = await ListModel.findByUserId(ctx.params.userId);
         ctx.ok(users);
+    } catch (e) {
+        ctx.badRequest({ message: e.message });
+    }
+}
+
+export async function getMyLists(ctx) {
+    try {
+        if (!ctx.state.user) throw new Error("No user supplied");
+        const lists = await ListModel.findByUserId(ctx.state.user.id);
+        ctx.ok(lists);
     } catch (e) {
         ctx.badRequest({ message: e.message });
     }

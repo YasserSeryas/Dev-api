@@ -11,8 +11,8 @@ tasks.get("/protected", isAuthentificatedAndResolveUser, (ctx) => {
 });
 tasks.get("/:id", TaskControllers.id);
 tasks.get("/lists/:listId", TaskControllers.getAllByList);
-tasks.post("/", TaskControllers.create);
-tasks.put("/:id", TaskControllers.update);
-tasks.del("/:id", TaskControllers.destroy);
+tasks.post("/", isAuthentificatedAndResolveUser, TaskControllers.create);
+tasks.put("/:id", isAuthentificatedAndResolveUser, TaskControllers.update);
+tasks.del("/:id", isAuthentificatedAndResolveUser, TaskControllers.destroy);
 
 export default tasks;
