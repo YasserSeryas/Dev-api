@@ -51,6 +51,9 @@ export async function login (ctx) {
     const isPasswordValid = await argon2.verify(password.password, value.password)
     if(!isPasswordValid) throw new Error('Invalid password')
     ctx.ok({message: 'Login successful'})
+    const token = user.generateJWT()
+     await user.save()
+    ctx.ok({ "activeToken" : token})
   } catch(e) {
     ctx.badRequest({ message: e.message })
   }
