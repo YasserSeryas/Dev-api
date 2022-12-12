@@ -5,6 +5,6 @@ const users = new Router();
 
 users.post("/register", UserControllers.register);
 users.post("/login", UserControllers.login);
-users.get("/", UserControllers.index);
+users.put("/:id", UserControllers.update);
 
 export default users;
