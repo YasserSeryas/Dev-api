@@ -13,7 +13,7 @@ lists.get(
     listControllers.getMyLists
 );
 lists.get("/:id", isAuthentificatedAndResolveUser, listControllers.id);
-lists.get("/", isAuthentificatedAndResolveUser, listControllers.index);
+lists.get("/", listControllers.index);
 lists.post("/", isAuthentificatedAndResolveUser, listControllers.create);
 lists.put("/:id", isAuthentificatedAndResolveUser, listControllers.update);
 lists.del("/:id", isAuthentificatedAndResolveUser, listControllers.destroy);
