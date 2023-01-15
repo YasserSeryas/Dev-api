@@ -54,13 +54,15 @@ export async function create(ctx) {
         const listValidationSchema = Joi.object({
             title: Joi.string().required(),
             description: Joi.string(),
-            user: Joi.string().required(),
         });
         const { error, value } = listValidationSchema.validate(
             ctx.request.body
         );
         if (error) throw new Error(error);
-        const newList = await ListModel.create(value);
+        const newList = await ListModel.create({
+            ...value,
+            user: ctx.state.user.id,
+        });
         ctx.ok(newList);
     } catch (e) {
         ctx.badRequest({ message: e.message });
@@ -92,7 +94,10 @@ export async function destroy(ctx) {
     try {
         if (!ctx.params.id) throw new Error("No id supplied");
         // await TaskModel.deleteMany({ list:})
-        await ListModel.findOneByIdAndDelete(ctx.state.user.id, ctx.params.id);
+        await ListModel.deleteOne({
+            _id: ctx.params.id,
+            user: ctx.state.user.id,
+        });
         ctx.ok("Ressource deleted");
     } catch (e) {
         ctx.badRequest({ message: e.message });

@@ -9,7 +9,7 @@ tasks.get("/", TaskControllers.index);
 tasks.get("/protected", isAuthentificatedAndResolveUser, (ctx) => {
     ctx.ok({ message: "You are protected", user: ctx.state.user });
 });
-tasks.get("/:id", TaskControllers.id);
+tasks.get("/:id", isAuthentificatedAndResolveUser, TaskControllers.id);
 tasks.get("/lists/:listId", TaskControllers.getAllByList);
 tasks.post("/", isAuthentificatedAndResolveUser, TaskControllers.create);
 tasks.put("/:id", isAuthentificatedAndResolveUser, TaskControllers.update);

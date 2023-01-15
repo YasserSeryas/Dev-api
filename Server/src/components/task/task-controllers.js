@@ -14,7 +14,10 @@ export async function index(ctx) {
 export async function id(ctx) {
     try {
         if (!ctx.params.id) throw new Error("No id supplied");
-        const task = await TaskModel.findOne(ctx.state.user.id, ctx.params.id);
+        const task = await TaskModel.findOne({
+            _id: ctx.params.id,
+            user: ctx.state.user.id,
+        });
         if (!task) {
             return ctx.notFound();
         }
@@ -79,7 +82,10 @@ export async function update(ctx) {
 export async function destroy(ctx) {
     try {
         if (!ctx.params.id) throw new Error("No id supplied");
-        await TaskModel.findOneByIdAndDelete(ctx.state.user.id, ctx.params.id);
+        await TaskModel.deleteOne({
+            _id: ctx.params.id,
+            user: ctx.state.user.id,
+        });
         ctx.ok("Ressource deleted");
     } catch (e) {
         ctx.badRequest({ message: e.message });
